@@ -1,0 +1,15 @@
+// BarcodeScannerActivity.kt
+override fun handleResult(rawResult: Result?) {
+    rawResult?.let {
+        // Barkod sonucunu al
+        val scannedSKU = it.text
+
+        // ProductDetailActivity'yi başlat
+        val intent = Intent(this, ProductDetailActivity::class.java)
+        intent.putExtra("sku", scannedSKU)
+        startActivity(intent)
+    }
+
+    // Barkod taramasını devam ettirmek için
+    scannerView.resumeCameraPreview(this)
+}
