@@ -1,0 +1,60 @@
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.zxing.Result
+import me.dm7.barcodescanner.zxing.ZXingScannerView
+
+class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
+    private val REQUEST_CAMERA_PERMISSION = 1001
+    private lateinit var scannerView: ZXingScannerView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        scannerView = ZXingScannerView(this)
+        setContentView(scannerView)
+        checkPermission()
+    }
+
+    private fun checkPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+        } else {
+            scannerView.startCamera()
+            scannerView.setResultHandler(this)
+        }
+    }
+
+    override fun handleResult(rawResult: Result?) {
+        rawResult?.let {
+            Log.d("BarcodeScanner", "Barcode result: ${it.text}")
+            Toast.makeText(this, "Barcode result: ${it.text}", Toast.LENGTH_SHORT).show()
+            // Burada barkod sonucunu işleyebilirsiniz, örneğin bir API'ye gönderebilir veya kullanıcıya gösterebilirsiniz.
+        }
+
+        // Barkod taramasını devam ettirmek için
+        scannerView.resumeCameraPreview(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        scannerView.stopCamera()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                scannerView.startCamera()
+                scannerView.setResultHandler(this)
+            } else {
+                Toast.makeText(this, "Kamera izni verilmedi", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
+    }
+}
