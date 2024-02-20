@@ -1,0 +1,20 @@
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_product_detail.*
+
+class ProductDetailActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_product_detail)
+
+        // Ürün detaylarını al
+        val product = intent.getParcelableExtra<Product>("product")
+
+        // Ürün detaylarını göster
+        product?.let {
+            txtSku.text = it.sku
+            txtName.text = it.name
+            txtPrice.text = "$${it.price}"
+        }
+    }
+}
