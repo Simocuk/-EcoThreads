@@ -1,0 +1,7 @@
+<Button
+    android:id="@+id/btnScanBarcode"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Barkodu Tarayın"
+    android:layout_centerInParent="true"
+    android:onClick="onScanBarcodeButtonClick" />
