@@ -1,0 +1,22 @@
+override fun handleResult(rawResult: Result?) {
+    rawResult?.let {
+        Log.d("BarcodeScanner", "Barcode result: ${it.text}")
+        Toast.makeText(this, "Barcode result: ${it.text}", Toast.LENGTH_SHORT).show()
+
+        // QR kodu ise
+        if (it.barcodeFormat == BarcodeFormat.QR_CODE) {
+            // QR kodu içeriğini al
+            val qrContent = it.text
+
+            // Örnek olarak QR kod içeriğini bir URL olarak kabul edelim
+            // URL'yi açmak için tarayıcıya yönlendir
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(qrContent))
+            startActivity(browserIntent)
+        } else {
+            // Diğer barkod türleri için buraya özel davranışlar ekleyebilirsiniz.
+        }
+    }
+
+    // Barkod taramasını devam ettirmek için
+    scannerView.resumeCameraPreview(this)
+}
