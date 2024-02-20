@@ -1,0 +1,36 @@
+data class Product(val sku: String, val name: String, val price: Double)
+override fun handleResult(rawResult: Result?) {
+    rawResult?.let {
+        Log.d("BarcodeScanner", "Barcode result: ${it.text}")
+        Toast.makeText(this, "Barcode result: ${it.text}", Toast.LENGTH_SHORT).show()
+
+        // SKU numarasını veritabanında ara
+        val scannedSKU = it.text
+        val product = findProductBySKU(scannedSKU)
+
+        if (product != null) {
+            // Ürünü bulursak, ürün detaylarına yönlendir
+            // Örneğin, ProductDetailActivity'ye yönlendirilebilir
+            val intent = Intent(this, ProductDetailActivity::class.java)
+            intent.putExtra("product", product)
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, "Ürün bulunamadı", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Barkod taramasını devam ettirmek için
+    scannerView.resumeCameraPreview(this)
+}
+
+private fun findProductBySKU(sku: String): Product? {
+    // SKU numarasını veritabanında arayıp eşleşen ürünü döndür
+    // Bu örnekte, sabit bir ürün listesi kullanacağız
+    val productList = listOf(
+        Product("12345", "Ürün 1", 29.99),
+        Product("67890", "Ürün 2", 49.99)
+        // Diğer ürünler...
+    )
+
+    return productList.find { it.sku == sku }
+}
