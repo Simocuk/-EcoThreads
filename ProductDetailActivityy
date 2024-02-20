@@ -1,0 +1,36 @@
+// ProductDetailActivity.kt
+import android.os.Bundle
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+
+class ProductDetailActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_product_detail)
+
+        // SKU numarasını intent'ten al
+        val sku = intent.getStringExtra("sku")
+
+        // SKU numarasını kullanarak ürün detaylarını bul
+        val product = findProductBySKU(sku)
+
+        // Ürün detaylarını göster
+        val txtProductDetail = findViewById<TextView>(R.id.txtProductDetail)
+        product?.let {
+            val productDetailText = "Ürün Adı: ${it.name}\nFiyat: $${it.price}"
+            txtProductDetail.text = productDetailText
+        }
+    }
+
+    private fun findProductBySKU(sku: String?): Product? {
+        // SKU numarasını veritabanında arayıp eşleşen ürünü döndür
+        // Bu örnekte, sabit bir ürün listesi kullanıyoruz
+        val productList = listOf(
+            Product("12345", "Ürün 1", 29.99),
+            Product("67890", "Ürün 2", 49.99)
+            // Diğer ürünler...
+        )
+
+        return productList.find { it.sku == sku }
+    }
+}
